@@ -1,0 +1,125 @@
+.Dd July 1, 2026
+.Dt ANSIBLE_INIT 8
+.Os FreeBSD
+.Sh NAME
+.Nm ansible_init
+.Nd Firstboot ansible-pull initialization rc script
+.Sh SYNOPSIS
+.Nm
+.Cm start
+.Nm
+.Cm stop
+.Nm
+.Cm status
+.Nm
+.Cm enabled
+.Sh DESCRIPTION
+The
+.Nm
+script provides automated, unattended system configuration during the initial
+boot sequence using
+.Xr ansible-pull 1 .
+It is explicitly designed to run once when a system is deployed via the
+.Cm firstboot
+keyword mechanism.
+.Pp
+When executed, the service constructs an
+.Xr ansible-pull 1
+command line to clone a specified Git repository and execute a local Ansible
+playbook, configuring the FreeBSD host automatically.
+.Sh RC.CONF VARIABLES
+The
+.Nm
+script reads configuration variables from
+.Pa /etc/rc.conf ,
+.Pa /etc/rc.conf.local ,
+or
+.Pa /etc/rc.conf.d/ansible_init .
+.Pp
+The following variables are available:
+.Bl -tag -width indent
+.It Va ansible_init_enable
+.Pq Vt bool
+Set to "NO" by default. Set it to "YES" to enable the service.
+.It Va ansible_init_host
+.Pq Vt str
+The base URL or hostname hosting the remote Ansible repository.
+Default:
+.Pa http://localhost .
+.It Va ansible_init_repo
+.Pq Vt str
+The repository name containing the playbook.
+Default:
+.Pa ansible-conf-init .
+.It Va ansible_init_dest
+.Pq Vt str
+The root destination directory where the repository will be cloned.
+Default:
+.Pa /root .
+.It Va ansible_init_vars
+.Pq Vt str
+Path to a directory containing files with local variables passed to the Ansible execution.
+Default:
+.Pa /root/ansible-vars .
+.It Va ansible_init_playbook
+.Pq Vt str
+The entrypoint playbook file inside the repository to execute.
+Default:
+.Pa pb-init.yml .
+.El
+.Sh DEPLOYMENT ENVIRONMENT
+The service injects a restricted, safe execution environment via
+.Va ansible_init_env
+To guarantee that commands executed within the Ansible playbooks can resolve path references to both standard base system binaries and packages installed in standard ports prefixes.
+.Pp
+The following environment variables are strictly passed to the execution shell:
+.Bl -tag -width indent
+.It Ev PATH
+.Pa /sbin:/bin:/usr/sbin:/usr/bin:%%PREFIX%%/sbin:%%PREFIX%%/bin
+.It Ev LANG
+.Li en_US.UTF-8
+.It Ev LC_ALL
+.Li en_US.UTF-8
+.El
+.Sh INTERNALS
+The service translates the
+.Xr rc.conf 5
+variables into a structured command utilizing the following internal layout:
+.Bd -literal -offset indent
+%%PREFIX%%/bin/ansible-pull -i hosts \e
+    -U <ansible_init_host>/<ansible_init_repo> \e
+    -d <ansible_init_dest>/<ansible_init_repo> \e
+    -e 'ai_vars=<ansible_init_vars>' \e
+    -e 'ai_pull_mode=true' \e
+    <ansible_init_playbook>
+.Ed
+.Pp
+The
+.Fl e
+extra variables flags inject
+.Va ai_vars
+and
+.Va ai_pull_mode
+into the playbook scope, allowing the playbook tasks to adapt dynamically to the bootstrap process.
+.Sh FILES
+.Bl -tag -width Pa
+.It Pa %%PREFIX%%/etc/rc.d/ansible_init
+The rc script itself.
+.It Pa /etc/rc.conf
+Primary configuration file where parameters are defined.
+.El
+.Sh SEE ALSO
+.Xr ansible-pull 1 ,
+.Xr rc.conf 5 ,
+.Xr rc 8 ,
+.Xr rc.subr 8
+.Sh HISTORY
+The
+.Nm
+manual page and script first appeared in 2026.
+.Sh AUTHORS
+.An -nosplit
+The
+.Nm
+script and this manual page were written by
+.An Vladimir Botka Aq Mt vbotka [at] gmail.com .

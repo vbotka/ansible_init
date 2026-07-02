@@ -1,0 +1,11 @@
+---
+- name: ansible-example
+  hosts: localhost
+
+  tasks:
+
+    - name: Create hello world placeholder file
+      ansible.builtin.copy:
+        dest: /tmp/ansible-hello-world.txt
+        content: |
+          [ansible-test] Hello world!
