@@ -7,6 +7,7 @@ EXTRACT_ONLY=	# none
 
 MAINTAINER=	vbotka@gmail.com
 COMMENT=	Firstboot ansible-pull initialization rc script
+WWW=		https://github.com/vbotka/ansible_init
 
 LICENSE=	BSD2CLAUSE
 LICENSE_FILE=	${FILESDIR}/LICENSE
