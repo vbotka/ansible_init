@@ -58,9 +58,9 @@ What This Example Accomplishes
 4. Upon execution, ansible-pull clones the repository and executes a task that
    generates a file (/tmp/ansible-hello-world.txt).
 
-Warning: The git:// protocol does not support encryption or authentication. 
-While perfect for fast local prototyping or isolated provisioning networks, 
-you should change your ansible_init_host parameter to https:// for production 
+Warning: The git:// protocol does not support encryption or authentication.
+While perfect for fast local prototyping or isolated provisioning networks,
+you should change your ansible_init_host parameter to https:// for production
 deployments.
 
 Install Git and create local Git repository
@@ -95,5 +95,5 @@ The ansible-pull execution clones the repository into the local directory
 /root/ansible-conf-example and executes the playbook. As a result, the file
 /tmp/ansible-hello-world.txt is created:
 
-# cat /tmp/ansible-hello-world.txt 
+# cat /tmp/ansible-hello-world.txt
 [ansible-test] Hello world!
