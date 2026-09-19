@@ -3,6 +3,8 @@
 This port installs a firstboot rc script that executes ansible-pull to
 automatically configure a FreeBSD system on its initial boot sequence.
 
+[#296507 [New Port] sysutils/ansible-init-firstboot: Firstboot ansible-pull initialization service](https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=296507)
+
 ## See
 
 * Example 524. [iocage template ansible-init](https://ansible-collection-freebsd.readthedocs.io/en/latest/examples/524/example.html)
